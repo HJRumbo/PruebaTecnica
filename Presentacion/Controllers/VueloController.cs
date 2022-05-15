@@ -61,6 +61,7 @@ namespace Presentacion.Controllers
             return Ok(new VueloViewModel(respuesta.Vuelo!));
         }
 
+        [NonAction]
         public Vuelo MapearVuelo(VueloInputModel vueloInput) {
             
             var vuelo = new Vuelo(){

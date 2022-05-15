@@ -4,6 +4,7 @@ using Presentacion.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,9 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder.WithOrigins("https://localhost:44423",
-                                "http://localhost:4200")
+                                "http://localhost:4200",
+                                "https://aeropuerto-prueba.000webhostapp.com",
+                                "http://aeropuerto-prueba.000webhostapp.com")
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
         });
@@ -56,6 +59,46 @@ builder.Services.AddControllersWithViews();
     });
 #endregion
 
+builder.Services.AddSwaggerGen(c => {
+        c.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Version = "v1",
+            Title = "API Prueba Técnica",
+            Description = @"ASP.NET Core Web API + Angular. 
+                Entityframework.
+                API Autenticada con JWT (Json Web Token). ",
+            Contact = new OpenApiContact
+            {
+                Name = "Hernando Rumbo",
+                Email = string.Empty,
+                Url = new Uri("https://github.com/HJRumbo/PruebaTecnica"),
+            }
+        });
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Please enter token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "bearer"
+        });
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type=ReferenceType.SecurityScheme,
+                        Id="Bearer"
+                    }
+                },
+                new string[]{}
+            }
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -77,6 +120,14 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
+
+//start swagger
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+});
+//end swagger
 
 app.MapFallbackToFile("index.html"); ;
 
