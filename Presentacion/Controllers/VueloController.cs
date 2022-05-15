@@ -7,7 +7,6 @@ using Presentacion.Models;
 
 namespace Presentacion.Controllers
 {
-    [Authorize(Roles = "ADMIN")]
     [Route("api/[controller]")]
     [ApiController]
     public class VueloController : ControllerBase
@@ -18,6 +17,7 @@ namespace Presentacion.Controllers
             _vueloService = new VueloService(context);
         }
 
+        [Authorize(Roles = "ADMIN, CLIENTE")]
         [HttpGet]
         public ActionResult<IEnumerable<VueloViewModel>>? Get()
         {
@@ -30,6 +30,7 @@ namespace Presentacion.Controllers
             return Ok(vuelos);
         }
 
+        [Authorize(Roles = "ADMIN, CLIENTE")]
         [HttpGet("{id}")]
         public ActionResult<VueloViewModel> Get(int id) {
             var vuelo = _vueloService.ConsultarVuelo(id);
@@ -40,6 +41,7 @@ namespace Presentacion.Controllers
             return Ok(new VueloViewModel(vuelo));
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public ActionResult<VueloViewModel> Post(VueloInputModel vueloInput) {
 

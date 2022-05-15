@@ -13,7 +13,7 @@ using Presentacion.Service;
 
 namespace Presentacion.Controllers
 {
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Roles = "ADMIN, CLIENTE")]
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
