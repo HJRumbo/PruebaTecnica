@@ -14,6 +14,8 @@ namespace Presentacion.Models
         [Required(ErrorMessage = "La fecha de salida es requerida")]
         [RegularExpression(@"^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$", 
             ErrorMessage = "El formato debe ser de Fecha aaaa-mm-dd")]
+        [ValidarFecha( ErrorMessage="La fecha debe ser mayor a la hoy")]
+
         public string? Fecha { get; set; }
 
         [Required(ErrorMessage = "La hora de salida es requerida")]
@@ -40,7 +42,7 @@ namespace Presentacion.Models
             this.NumeroVuelo = vuelo.NumeroVuelo;
             this.CiudadOrigen = vuelo.CiudadOrigen;
             this.CiudadDestino = vuelo.CiudadDestino;
-            this.Fecha = vuelo.Fecha.ToShortDateString();
+            this.Fecha = vuelo.Fecha.ToString("yyyy-MM-dd");
             this.HoraSalida = vuelo.HoraSalida.ToShortTimeString();
             this.HoraLlegada = vuelo.HoraLlegada.ToShortTimeString();
             this.Aerolinea = vuelo.Aerolinea;
@@ -53,4 +55,20 @@ namespace Presentacion.Models
         public Aerolinea? Aerolinea { get; set; }
         public Estado? EstadoVuelo { get; set; }
     }
+
+    public class ValidarFecha : ValidationAttribute
+    {
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            if (DateTime.Parse(value?.ToString()!) >= DateTime.Now.Date)
+            {
+                return ValidationResult.Success;
+            }
+            else
+            {
+                return new ValidationResult(ErrorMessage);
+            }
+        }
+    }
+
 }
